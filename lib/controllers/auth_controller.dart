@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:project1/auth/login_page.dart';
 import 'package:project1/home_page.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +9,7 @@ import 'dart:convert';
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
+  final Logger logger = Logger();
 
   // Login function using API
   Future<void> login(String username, String password) async {
@@ -16,14 +19,21 @@ class AuthController extends GetxController {
         headers: {"Content-Type": "application/json"},
         body: json.encode({
           "username": username,
-          "password": password
+          "password": password,
+          
         }),
+        
         
       );
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
-        // Save user session or token if required
+        logger.i("Response data: $userData");
+
+        final String token = userData['accessToken'];
+        final box = GetStorage();
+        await box.write('userToken', token);
+
         Get.offAll(() => HomePage());
       } else {
         Get.snackbar(

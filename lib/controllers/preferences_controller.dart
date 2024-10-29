@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PreferencesController extends GetxController {
   var isFirstLaunch = true.obs;
@@ -12,12 +12,12 @@ class PreferencesController extends GetxController {
 
   Future<void> checkFirstLaunch() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      isFirstLaunch.value = prefs.getBool('first_launch') ?? true;
+      final box = GetStorage();
+      isFirstLaunch.value = box.read('first_launch') ?? true;
 
       if (isFirstLaunch.value) {
         // Set first launch to false
-        await prefs.setBool('first_launch', false);
+        await box.write('first_launch', false);
       }
     } catch (e) {
       print("Error loading preferences: $e");
