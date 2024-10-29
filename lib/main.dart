@@ -3,11 +3,13 @@ import 'package:project1/auth/login_page.dart';
 import 'package:project1/intro_pages/onboarding_page.dart';
 import 'controllers/preferences_controller.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart'; // Import get_storage
 import 'intro_pages/welcome_scene.dart';
 import 'home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init(); // Initialize GetStorage
   Get.put(PreferencesController());
 
   runApp(const MyApp());
@@ -16,19 +18,21 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final PreferencesController preferencesController = Get.put(PreferencesController());
+    final PreferencesController preferencesController = Get.find();
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-
-
-      home: Obx((){
-        return preferencesController.isFirstLaunch.value ? WelcomePage() : LoginPage();
-      })
+      home: Obx(() {
+        if (preferencesController.isFirstLaunch.value) {
+          return WelcomePage();
+        } else if (preferencesController.isLoggedIn.value) {
+          return HomePage(); 
+        } else {
+          return LoginPage(); 
+        }
+      }),
     );
   }
 }
-
