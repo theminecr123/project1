@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project1/auth/login_page.dart';
 import 'package:get/get.dart';
 
 class IntroPage2 extends StatelessWidget {
@@ -43,16 +42,17 @@ class IntroPage2 extends StatelessWidget {
                   color: Colors.grey[850],
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 300),
+                      padding: const EdgeInsets.only(top: 200),
                       child: ElevatedButton(
                         onPressed: () {
-                          Get.to(()=>LoginPage());
+                          Get.toNamed("/login");
+
 
                         },
                         child: Text('Shopping now'),
                         style: ElevatedButton.styleFrom(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                              EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                         ),
                       ),
                     )

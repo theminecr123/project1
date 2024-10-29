@@ -31,7 +31,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>{
           ),
 
           Container(
-            alignment: Alignment(0, 0.75),
+            alignment: Alignment(0, 0.5),
             child: SmoothPageIndicator(
               controller: _pageController,
               count: 3,

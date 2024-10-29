@@ -26,13 +26,6 @@ class MyApp extends StatelessWidget {
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      
-      getPages: [
-        GetPage(name: '/', page: () => HomePage()),
-        GetPage(name: '/welcome', page: () => WelcomePage()),
-
-      ],
 
 
       home: Obx((){
@@ -41,5 +34,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 

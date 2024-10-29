@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 class ProductController extends GetxController{
   var isLoading = false.obs;
   ProductModel? _productModel;
+  get productModel => _productModel;
 
   fetchData() async{
     try{

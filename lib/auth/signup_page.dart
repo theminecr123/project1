@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project1/auth/login_page.dart';
-import 'package:project1/controllers/signup_controller.dart';
+import 'package:project1/controllers/auth_controller.dart';
 
 class SignupPage extends StatelessWidget {
   final AuthController _authController = Get.put(AuthController());
@@ -59,7 +59,7 @@ class SignupPage extends StatelessWidget {
                 if (passwordController.text == confirmPasswordController.text) {
                   _authController.signUp(emailController.text.trim(), passwordController.text.trim());
                 } else {
-                  Get.snackbar("Error", "Passwords do not match", backgroundColor: Colors.red, colorText: Colors.white);
+                  Get.snackbar("Error", "Passwords do not match", backgroundColor: Colors.red, colorText: Colors.white, snackPosition:SnackPosition.BOTTOM);
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -82,7 +82,8 @@ class SignupPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () {
-                  Get.to(() => LoginPage());
+                  Get.toNamed("/login");
+
                 },
                 child: Text("Already have an account? Log In"),
               ),

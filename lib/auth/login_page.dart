@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project1/auth/signup_page.dart';
+import 'package:project1/controllers/auth_controller.dart';
+
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final AuthController _authController = Get.put(AuthController());
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, 
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -16,28 +21,24 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(bottom: 50, top: 80), 
+              padding: const EdgeInsets.only(bottom: 50, top: 80),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, 
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text(
-                    "Log into",
-                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400),
-                  ),
-                  Text(
-                    "your account",
-                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400),
-                  ),
+                  Text("Log into", style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400)),
+                  Text("your account", style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            const TextField(
-              decoration: InputDecoration(labelText: "Email address"),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email address"),
             ),
             const SizedBox(height: 10),
-            const TextField(
-              decoration: InputDecoration(labelText: "Password"),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(labelText: "Password"),
               obscureText: true,
             ),
             const SizedBox(height: 10),
@@ -51,10 +52,11 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
             ElevatedButton(
               onPressed: () {
-                // Log in action
+
+                  _authController.login(emailController.text.trim(), passwordController.text.trim());
+                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(45, 32, 28, 1),
@@ -64,8 +66,6 @@ class LoginPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-            
-            
             const SizedBox(height: 20),
             const Text("or sign in with", textAlign: TextAlign.center),
             const SizedBox(height: 10),
@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () {
-                  Get.to(()=>SignupPage());
+                  Get.toNamed("/signup");
                 },
                 child: const Text("Don't have an account? Sign Up"),
               ),
@@ -97,20 +97,13 @@ class LoginPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
         height: 40,
-        width: 40, 
+        width: 40,
         decoration: BoxDecoration(
-          shape: BoxShape.circle, 
-          border: Border.all(
-            width: 1,
-            color: Colors.grey,
-          ),
+          shape: BoxShape.circle,
+          border: Border.all(width: 1, color: Colors.grey),
         ),
         child: Center(
-          child: Image.asset(
-            assetPath,
-            height: 20, 
-            width: 20,  
-          ),
+          child: Image.asset(assetPath, height: 20, width: 20),
         ),
       ),
     );
