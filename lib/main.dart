@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/auth/login_page.dart';
 import 'package:project1/intro_pages/onboarding_page.dart';
@@ -10,8 +9,6 @@ import 'home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(PreferencesController());
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
   runApp(const MyApp());
 }

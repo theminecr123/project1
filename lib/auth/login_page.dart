@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project1/controllers/auth_controller.dart';
 
-
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final AuthController _authController = Get.put(AuthController());
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController username = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  // State variable for password visibility
+  final RxBool _isPasswordVisible = false.obs; // Use Rx to reactively update the UI
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,25 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Email address"),
+              controller: username,
+              decoration: const InputDecoration(labelText: "Username"),
             ),
             const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
-              obscureText: true,
-            ),
+            Obx(() => TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        _isPasswordVisible.value = !_isPasswordVisible.value;
+                      },
+                    ),
+                  ),
+                  obscureText: !_isPasswordVisible.value,
+                )),
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
@@ -54,9 +65,7 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-
-                  _authController.login(emailController.text.trim(), passwordController.text.trim());
-                
+                _authController.login(username.text.trim(), passwordController.text.trim());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(45, 32, 28, 1),

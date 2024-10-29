@@ -4,10 +4,22 @@ import 'package:project1/controllers/product_controller.dart';
 
 class HomePage extends StatelessWidget {
   final ProductController productController = Get.put(ProductController());
+  final ScrollController _scrollController = ScrollController();
+
+  HomePage() {
+    // Listen for scroll events to load more products when reaching the end
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+        if (!productController.isLoadingMore.value) {
+          productController.fetchData(loadMore: true);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Fetch data when the widget is first built
+    // Fetch initial data
     productController.fetchData();
 
     return Scaffold(
@@ -71,7 +83,7 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 24),
 
-              // Featured Products
+              // Featured Products Section Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,16 +93,17 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 12),
 
-              // Product Grid
+              // Product Grid with Lazy Loading
               Expanded(
                 child: Obx(() {
-                  if (productController.isLoading.value) {
+                  if (productController.isLoading.value && productController.products.isEmpty) {
                     return Center(child: CircularProgressIndicator());
-                  } else if (productController.productModel == null) {
+                  } else if (productController.products.isEmpty) {
                     return Center(child: Text("No products found"));
                   } else {
                     return GridView.builder(
-                      itemCount: productController.productModel!.products.length,
+                      controller: _scrollController,
+                      itemCount: productController.products.length + (productController.isLoadingMore.value ? 1 : 0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 16,
@@ -98,8 +111,12 @@ class HomePage extends StatelessWidget {
                         childAspectRatio: 0.7,
                       ),
                       itemBuilder: (context, index) {
-                        final product = productController.productModel!.products[index];
-                        return _buildProductCard(product);
+                        if (index < productController.products.length) {
+                          final product = productController.products[index];
+                          return _buildProductCard(product);
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
                       },
                     );
                   }
@@ -109,7 +126,7 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      // Bottom Navigation Bar (for demonstration purposes)
+      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
@@ -121,7 +138,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Category Button
+  // Helper method to create category buttons
   Widget _buildCategoryButton(String category, bool isSelected) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -137,7 +154,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Product Card
+  // Helper method to create product cards
   Widget _buildProductCard(product) {
     return Container(
       decoration: BoxDecoration(
