@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:project1/auth/signup_page.dart';
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true, 
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50, top: 80), 
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, 
+                children: const [
+                  Text(
+                    "Log into",
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400),
+                  ),
+                  Text(
+                    "your account",
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const TextField(
+              decoration: InputDecoration(labelText: "Email address"),
+            ),
+            const SizedBox(height: 10),
+            const TextField(
+              decoration: InputDecoration(labelText: "Password"),
+              obscureText: true,
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  // Forgot password action
+                },
+                child: const Text("Forgot Password?"),
+              ),
+            ),
+            const SizedBox(height: 20),
+            
+            ElevatedButton(
+              onPressed: () {
+                // Log in action
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(45, 32, 28, 1),
+              ),
+              child: const Text(
+                "LOG IN",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            
+            
+            const SizedBox(height: 20),
+            const Text("or sign in with", textAlign: TextAlign.center),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildSocialIcon("assets/images/apple-icon.png"),
+                _buildSocialIcon("assets/images/facebook-icon.png"),
+                _buildSocialIcon("assets/images/google-icon.png"),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Get.to(()=>SignupPage());
+                },
+                child: const Text("Don't have an account? Sign Up"),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialIcon(String assetPath) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Container(
+        height: 40,
+        width: 40, 
+        decoration: BoxDecoration(
+          shape: BoxShape.circle, 
+          border: Border.all(
+            width: 1,
+            color: Colors.grey,
+          ),
+        ),
+        child: Center(
+          child: Image.asset(
+            assetPath,
+            height: 20, 
+            width: 20,  
+          ),
+        ),
+      ),
+    );
+  }
+}
