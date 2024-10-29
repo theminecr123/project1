@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project1/auth/login_page.dart';
 
 class IntroPage2 extends StatelessWidget {
   @override
@@ -45,7 +46,7 @@ class IntroPage2 extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 200),
                       child: ElevatedButton(
                         onPressed: () {
-                          Get.toNamed("/login");
+                          Get.to(()=>LoginPage());
 
 
                         },

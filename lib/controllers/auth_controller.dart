@@ -7,28 +7,16 @@ import 'package:project1/home_page.dart';
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static AuthController instance = Get.find();
-  late Rx<User?> firebaseUser;
 
-@override
-  void onInit() {
-    super.onInit();
-    firebaseUser = Rx<User?>(FirebaseAuth.instance.currentUser);
-    firebaseUser.bindStream(FirebaseAuth.instance.authStateChanges());
-    ever(firebaseUser, _setInitialScreen);
-  }
 
-  _setInitialScreen(User? user) {
-    if (user == null) {
-      Get.offAll(() => LoginPage());
-    } else {
-      Get.offAll(() => HomePage());
-    }
-  }
+
 
   // Login function
   Future<void> login(String email, String password) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      Get.offAll(() => HomePage());  
+
     } catch (e) {
       Get.snackbar(
         "Login Failed",
