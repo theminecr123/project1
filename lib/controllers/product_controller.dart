@@ -13,7 +13,7 @@ class ProductController extends GetxController {
 
   Future<void> fetchData({bool loadMore = false}) async {
     if (loadMore) isLoadingMore(true);
-    else isLoading(true);
+    // else isLoading(true);
 
     try {
       currentPage++;

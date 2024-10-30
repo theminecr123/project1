@@ -183,7 +183,8 @@ class ProductDetailPage extends StatelessWidget {
               onPressed: () {
                 Map<String, dynamic> newItem = {
       'id': product.id,
-
+  'title': product.title, // Make sure this exists
+  'price': product.price, // Make sure this exists
       'quantity': 1, // Default quantity
     };
     cartController.addItemToCart(newItem);

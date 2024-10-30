@@ -17,28 +17,27 @@ class CartController extends GetxController {
   }
 
   Future<void> fetchCartData() async {
-  int userId = box.read('userId');
-  final response = await http.get(Uri.parse('https://dummyjson.com/carts/user/$userId'));
+    int userId = box.read('userId');
+    final response = await http.get(Uri.parse('https://dummyjson.com/carts/user/$userId'));
 
-  logger.i("Fetching cart data for userId: $userId");
-  logger.i("Response status: ${response.statusCode}");
+    logger.i("Fetching cart data for userId: $userId");
+    logger.i("Response status: ${response.statusCode}");
 
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-    if (data['carts'] != null && data['carts'].isNotEmpty) {
-      cartData.value = data['carts'][0]; 
+      if (data['carts'] != null && data['carts'].isNotEmpty) {
+        cartData.value = data['carts'][0]; 
+      } else {
+        logger.e("Carts key not found or is empty in the data.");
+      }
+
+      isLoading(false); 
     } else {
-      logger.e("Carts key not found or is empty in the data.");
+      Get.snackbar('Error', 'Failed to load cart data');
+      isLoading(false);
     }
-
-    isLoading(false); 
-  } else {
-    Get.snackbar('Error', 'Failed to load cart data');
-    isLoading(false);
   }
-}
-
 
   void incrementQuantity(int index) {
     if (cartData['products'][index] != null) {
@@ -56,64 +55,79 @@ class CartController extends GetxController {
 
   Future<void> addItemToCart(Map<String, dynamic> newItem) async {
   int userId = box.read('userId') ?? 1; // Get the userId
-  final response = await http.post(
-    Uri.parse('https://dummyjson.com/carts/add'),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
+
+  try {
+    // Create the request body
+    final body = {
       'userId': userId,
-      'products': [newItem], // Add the new item to the products list
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    logger.i("Item added: ${response.body}");
-    fetchCartData(); // Refresh cart data after adding the item
-  } else {
-    logger.e("Failed to add item. Status Code: ${response.statusCode}");
-    Get.snackbar('Error', 'Failed to add item to cart');
-  }
-}
-
-
-Future<void> updateItemInCart(int cartId, int productId, int quantity) async {
-  final response = await http.put(
-    Uri.parse('https://dummyjson.com/carts/update/$cartId'),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
       'products': [
         {
-          'id': productId,
-          'quantity': quantity, // Update the quantity for this product
+          'id': newItem['id'],
+          'quantity': newItem['quantity'],
         }
       ],
-    }),
-  );
+    };
 
-  if (response.statusCode == 200) {
-    logger.i("Item updated: ${response.body}");
-    fetchCartData(); // Refresh cart data after updating
-  } else {
-    logger.e("Failed to update item. Status Code: ${response.statusCode}");
-    Get.snackbar('Error', 'Failed to update item in cart');
+    // Send the request
+    final response = await http.post(
+      Uri.parse('https://dummyjson.com/carts/user/$userId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 201) { // Check for the appropriate success code
+      var responseData = json.decode(response.body);
+      cartData.value = responseData; // Update cart data with the response
+      logger.i("Item added successfully. Updated cart data: ${cartData.value}");
+    } else {
+      logger.e("Failed to add item. Status Code: ${response.statusCode}");
+      Get.snackbar('Error', 'Failed to add item to cart: ${response.body}');
+    }
+  } catch (e) {
+    logger.e("Exception occurred: $e");
+    Get.snackbar('Error', 'An error occurred while adding item to cart');
   }
 }
 
-Future<void> deleteItemFromCart(int cartId, int productId) async {
-  final response = await http.delete(
-    Uri.parse('https://dummyjson.com/carts/remove/$cartId'),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
-      'id': productId, // The product ID to be deleted
-    }),
-  );
 
-  if (response.statusCode == 200) {
-    logger.i("Item deleted: ${response.body}");
-    fetchCartData(); // Refresh cart data after deletion
-  } else {
-    logger.e("Failed to delete item. Status Code: ${response.statusCode}");
-    Get.snackbar('Error', 'Failed to delete item from cart');
+  Future<void> updateItemInCart(int cartId, int productId, int quantity) async {
+    final response = await http.put(
+      Uri.parse('https://dummyjson.com/carts/update/$cartId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'products': [
+          {
+            'id': productId,
+            'quantity': quantity, // Update the quantity for this product
+          }
+        ],
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      logger.i("Item updated: ${response.body}");
+      fetchCartData(); // Refresh cart data after updating
+    } else {
+      logger.e("Failed to update item. Status Code: ${response.statusCode}");
+      Get.snackbar('Error', 'Failed to update item in cart');
+    }
   }
-}
 
+  Future<void> deleteItemFromCart(int cartId, int productId) async {
+    final response = await http.delete(
+      Uri.parse('https://dummyjson.com/carts/remove/$cartId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'id': productId, // The product ID to be deleted
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      logger.i("Item deleted: ${response.body}");
+      fetchCartData(); // Refresh cart data after deletion
+    } else {
+      logger.e("Failed to delete item. Status Code: ${response.statusCode}");
+      Get.snackbar('Error', 'Failed to delete item from cart');
+    }
+  }
 }
