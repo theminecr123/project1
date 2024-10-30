@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project1/auth/login_page.dart';
+import 'package:project1/config/MainNavigation.dart';
 import 'package:project1/intro_pages/onboarding_page.dart';
 import 'controllers/preferences_controller.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart'; // Import get_storage
 import 'intro_pages/welcome_scene.dart';
-import 'home_page.dart';
+import 'ui/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         if (preferencesController.isFirstLaunch.value) {
           return WelcomePage();
         } else if (preferencesController.isLoggedIn.value) {
-          return HomePage(); 
+          return MainLayout(); 
         } else {
           return LoginPage(); 
         }

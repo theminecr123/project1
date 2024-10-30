@@ -37,4 +37,8 @@ class ProductController extends GetxController {
       else isLoading(false);
     }
   }
+
+    List<Product> getSimilarProducts(String category) {
+    return products.where((p) => p.category == category).toList();
+  }
 }

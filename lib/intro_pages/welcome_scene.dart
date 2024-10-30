@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project1/home_page.dart';
+import 'package:project1/ui/home_page.dart';
 import 'package:project1/intro_pages/onboarding_page.dart';
 import 'package:flutter/services.dart';
 

@@ -17,11 +17,9 @@ class PreferencesController extends GetxController {
       isFirstLaunch.value = box.read('first_launch') ?? true;
 
       if (isFirstLaunch.value) {
-        // Set first launch to false
         await box.write('first_launch', false);
       }
 
-      // After checking first launch, check if user is logged in
       checkUserLoggedIn();
     } catch (e) {
       print("Error loading preferences: $e");
@@ -30,8 +28,8 @@ class PreferencesController extends GetxController {
 
   Future<void> checkUserLoggedIn() async {
     final box = GetStorage();
-    final String? token = box.read('userToken'); // Replace with your key
+    final String? token = box.read('userToken'); 
 
-    isLoggedIn.value = token != null; // Set logged in status based on token
+    isLoggedIn.value = token != null; 
   }
 }

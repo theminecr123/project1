@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:project1/auth/login_page.dart';
-import 'package:project1/home_page.dart';
+import 'package:project1/config/MainNavigation.dart';
+import 'package:project1/ui/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -34,7 +35,7 @@ class AuthController extends GetxController {
         final box = GetStorage();
         await box.write('userToken', token);
 
-        Get.offAll(() => HomePage());
+        Get.offAll(() => MainLayout());
       } else {
         Get.snackbar(
           "Login Failed",
