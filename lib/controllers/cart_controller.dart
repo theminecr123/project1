@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -27,12 +28,14 @@ class CartController extends GetxController {
       final data = json.decode(response.body);
 
       if (data['carts'] != null && data['carts'].isNotEmpty) {
-        cartData.value = data['carts'][0]; 
+        cartData.value = data['carts'][0];
+        // Store the cart data in GetStorage
+        box.write('cartData', cartData.value);
       } else {
         logger.e("Carts key not found or is empty in the data.");
       }
 
-      isLoading(false); 
+      isLoading(false);
     } else {
       Get.snackbar('Error', 'Failed to load cart data');
       isLoading(false);
@@ -54,31 +57,27 @@ class CartController extends GetxController {
   }
 
   Future<void> addItemToCart(Map<String, dynamic> newItem) async {
-  int userId = box.read('userId') ?? 1; // Get the userId
+  int userId = box.read('userId');
 
   try {
-    // Create the request body
-    final body = {
+    // Prepare the body for the request
+    final body = json.encode({
       'userId': userId,
-      'products': [
-        {
-          'id': newItem['id'],
-          'quantity': newItem['quantity'],
-        }
-      ],
-    };
+      'products': [newItem], // Send the new item as a list
+    });
 
-    // Send the request
+    // Send the request to add the new item to the cart
     final response = await http.post(
-      Uri.parse('https://dummyjson.com/carts/user/$userId'),
+      Uri.parse('https://dummyjson.com/carts/add'),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(body),
+      body: body,
     );
 
-    if (response.statusCode == 201) { // Check for the appropriate success code
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = json.decode(response.body);
-      cartData.value = responseData; // Update cart data with the response
-      logger.i("Item added successfully. Updated cart data: ${cartData.value}");
+      cartData.value = responseData;
+      Get.snackbar('Success!',icon: Icon(Icons.check) ,'Added product to Cart!', backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+
     } else {
       logger.e("Failed to add item. Status Code: ${response.statusCode}");
       Get.snackbar('Error', 'Failed to add item to cart: ${response.body}');
@@ -88,6 +87,9 @@ class CartController extends GetxController {
     Get.snackbar('Error', 'An error occurred while adding item to cart');
   }
 }
+
+
+
 
 
   Future<void> updateItemInCart(int cartId, int productId, int quantity) async {
