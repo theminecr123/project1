@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project1/controllers/cart_controller.dart';
 import 'package:project1/controllers/product_controller.dart';
 import 'package:project1/models/product_model.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final ProductController controller = Get.put(ProductController());
+  final CartController cartController = Get.put(CartController());
+
   final Product product;
 
   ProductDetailPage({required this.product});
@@ -158,7 +161,7 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar() {
   return Container(
     decoration: BoxDecoration(
       color: Colors.black,
@@ -170,41 +173,37 @@ Widget _buildBottomNavigationBar() {
         top: BorderSide(color: Colors.white, width: 2), // Optional border color and width
       ),
     ),
-    child: SizedBox(
-      height: 70,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // Add your button action here
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        height: 70,
+        child: Row(
+          
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Map<String, dynamic> newItem = {
+      'id': product.id,
+
+      'quantity': 1, // Default quantity
+    };
+    cartController.addItemToCart(newItem);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                'Add to Cart',
+                style: TextStyle(color: Colors.white),
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min, // Adjust the button size based on content
-              children: [
-                Icon(
-                  Icons.shopping_cart, // Cart icon
-                  color: Colors.white,
-                  size: 20, // Adjust icon size as needed
-                ),
-                SizedBox(width: 8), // Space between icon and text
-                Text(
-                  'Add to Cart',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
+    
   );
 }
 

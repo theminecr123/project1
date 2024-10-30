@@ -32,8 +32,10 @@ class AuthController extends GetxController {
         logger.i("Response data: $userData");
 
         final String token = userData['accessToken'];
+        final int userId = userData['id'];
         final box = GetStorage();
         await box.write('userToken', token);
+        await box.write('userId', userId);
 
         Get.offAll(() => MainLayout());
       } else {

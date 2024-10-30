@@ -27,7 +27,7 @@ class MainLayout extends StatelessWidget {
       Navigator(
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
-            builder: (context) => IntroPage2(),
+            builder: (context) => CartScreen(),
           );
         },
       ),
