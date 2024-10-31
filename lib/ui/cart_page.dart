@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project1/controllers/cart_controller.dart';
 
-class CartScreen extends StatefulWidget {
+class CartPage extends StatefulWidget {
   @override
-  _CartScreenState createState() => _CartScreenState();
+  _CartPageState createState() => _CartPageState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.put(CartController());
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    cartController.fetchCartData();  // Fetch cart data whenever dependencies change
+  // Calculate total price
+  double calculateTotal() {
+    double total = 0.0;
+    for (var product in cartController.cartData['products']) {
+      total += (product['price'] ?? 0) * (product['quantity'] ?? 1);
+    }
+    return total;
   }
 
   @override
@@ -35,7 +38,6 @@ class _CartScreenState extends State<CartScreen> {
           return Center(child: Text('Cart is empty'));
         }
 
-        // Display the products
         return Column(
           children: [
             Expanded(
@@ -43,46 +45,60 @@ class _CartScreenState extends State<CartScreen> {
                 itemCount: products.length,
                 itemBuilder: (context, index) {
                   var product = products[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: ListTile(
-                        leading: product['thumbnail'] != null
-                            ? Image.network(
-                                product['thumbnail'],
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              )
-                            : Container(width: 50, height: 50, color: Colors.grey),
-                        title: Text(
-                          product['title'] ?? 'No Title',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+
+                  return Dismissible(
+                    key: Key(product['id'].toString()),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      cartController.deleteItemFromCart(index);
+                    },
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Icon(Icons.delete, color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('\$${product['price'] ?? '0.00'}'),
-                            Text('Quantity: ${product['quantity'] ?? '1'}'),
-                            Text('Total: \$${(product['price'] * product['quantity']).toStringAsFixed(2)}'), 
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.remove),
-                              onPressed: () => cartController.decrementQuantity(index),
-                            ),
-                            Text('${product['quantity'] ?? '1'}'),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () => cartController.incrementQuantity(index),
-                            ),
-                          ],
+                        child: ListTile(
+                          leading: product['thumbnail'] != null
+                              ? Image.network(
+                                  product['thumbnail'],
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(width: 50, height: 50, color: Colors.grey),
+                          title: Text(
+                            product['title'] ?? 'No Title',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('\$${product['price'] ?? '0.00'}'),
+                              Text('Quantity: ${product['quantity'] ?? '1'}'),
+                              Text('Total: \$${((product['price'] ?? 0) * (product['quantity'] ?? 1)).toStringAsFixed(2)}'), 
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.remove),
+                                onPressed: () => cartController.decrementQuantity(index),
+                              ),
+                              Text('${product['quantity'] ?? '1'}'),
+                              IconButton(
+                                icon: Icon(Icons.add),
+                                onPressed: () => cartController.incrementQuantity(index),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -90,7 +106,6 @@ class _CartScreenState extends State<CartScreen> {
                 },
               ),
             ),
-            // Footer with Total and Checkout Button
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -98,16 +113,8 @@ class _CartScreenState extends State<CartScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Product price', style: TextStyle(fontSize: 16)),
-                      Text('\$${cartController.cartData['total'] ?? '0.00'}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                  Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Subtotal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text('\$${cartController.cartData['discountedTotal'] ?? '0.00'}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text('Total', style: TextStyle(fontSize: 16)),
+                      Text('\$${calculateTotal().toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -120,11 +127,7 @@ class _CartScreenState extends State<CartScreen> {
                     onPressed: () {
                       // Handle checkout
                     },
-                    child: Text('Proceed to checkout',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
+                    child: Text('Proceed to Checkout', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

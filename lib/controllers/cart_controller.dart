@@ -7,129 +7,96 @@ import 'package:logger/logger.dart';
 
 class CartController extends GetxController {
   final box = GetStorage();
-  var cartData = {}.obs;
+  var cartData = {}.obs;  // Local cart data
   var isLoading = true.obs;
   final Logger logger = Logger();
+  var totalProductCount = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchCartData();
+    loadCart(); // Load cart data from local storage on initialization
   }
 
+  // Load cart from GetStorage
+  void loadCart() {
+    var storedCartData = box.read('cartData');
+    if (storedCartData != null) {
+      cartData.value = storedCartData;
+      totalProductCount.value = getTotalProductCount();
+    }
+    isLoading(false);
+  }
+
+  // Fetch initial cart data from the API
   Future<void> fetchCartData() async {
     int userId = box.read('userId');
     final response = await http.get(Uri.parse('https://dummyjson.com/carts/user/$userId'));
 
-    logger.i("Fetching cart data for userId: $userId");
-    logger.i("Response status: ${response.statusCode}");
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       if (data['carts'] != null && data['carts'].isNotEmpty) {
         cartData.value = data['carts'][0];
-        // Store the cart data in GetStorage
-        box.write('cartData', cartData.value);
+        totalProductCount.value = getTotalProductCount();
+        box.write('cartData', cartData.value); // Store cart data locally
       } else {
         logger.e("Carts key not found or is empty in the data.");
       }
-
-      isLoading(false);
     } else {
       Get.snackbar('Error', 'Failed to load cart data');
-      isLoading(false);
     }
+    isLoading(false);
   }
 
+  // Increment quantity of a product
   void incrementQuantity(int index) {
     if (cartData['products'][index] != null) {
       cartData['products'][index]['quantity']++;
-      cartData.refresh();  
+      cartData.refresh();
+      box.write('cartData', cartData.value); 
+
     }
   }
 
+  // Decrement quantity of a product
   void decrementQuantity(int index) {
     if (cartData['products'][index] != null && cartData['products'][index]['quantity'] > 1) {
       cartData['products'][index]['quantity']--;
-      cartData.refresh(); 
+      cartData.refresh();
+      box.write('cartData', cartData.value);
     }
   }
 
-  Future<void> addItemToCart(Map<String, dynamic> newItem) async {
-  int userId = box.read('userId');
-
-  try {
-    // Prepare the body for the request
-    final body = json.encode({
-      'userId': userId,
-      'products': [newItem], // Send the new item as a list
-    });
-
-    // Send the request to add the new item to the cart
-    final response = await http.post(
-      Uri.parse('https://dummyjson.com/carts/add'),
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var responseData = json.decode(response.body);
-      cartData.value = responseData;
-      Get.snackbar('Success!',icon: Icon(Icons.check) ,'Added product to Cart!', backgroundColor: const Color.fromARGB(255, 120, 224, 124));
-
+  // Add item to cart locally
+  void addItemToCart(Map<String, dynamic> newItem) {
+    var products = cartData['products'] as List;
+    int existingIndex = products.indexWhere((product) => product['id'] == newItem['id']);
+    
+    if (existingIndex >= 0) {
+      // Increment quantity if product already exists
+      products[existingIndex]['quantity']++;
     } else {
-      logger.e("Failed to add item. Status Code: ${response.statusCode}");
-      Get.snackbar('Error', 'Failed to add item to cart: ${response.body}');
+      // Add new product
+      products.add({...newItem, 'quantity': 1});
     }
-  } catch (e) {
-    logger.e("Exception occurred: $e");
-    Get.snackbar('Error', 'An error occurred while adding item to cart');
-  }
-}
-
-
-
-
-
-  Future<void> updateItemInCart(int cartId, int productId, int quantity) async {
-    final response = await http.put(
-      Uri.parse('https://dummyjson.com/carts/update/$cartId'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'products': [
-          {
-            'id': productId,
-            'quantity': quantity, // Update the quantity for this product
-          }
-        ],
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      logger.i("Item updated: ${response.body}");
-      fetchCartData(); // Refresh cart data after updating
-    } else {
-      logger.e("Failed to update item. Status Code: ${response.statusCode}");
-      Get.snackbar('Error', 'Failed to update item in cart');
-    }
+    
+    cartData.refresh();
+    box.write('cartData', cartData.value); 
+    Get.snackbar('Success!', 'Added product to Cart!', backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+    totalProductCount.value = getTotalProductCount();
   }
 
-  Future<void> deleteItemFromCart(int cartId, int productId) async {
-    final response = await http.delete(
-      Uri.parse('https://dummyjson.com/carts/remove/$cartId'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'id': productId, // The product ID to be deleted
-      }),
-    );
+  // Delete item from cart
+  void deleteItemFromCart(int index) {
+    var products = cartData['products'] as List;
+    products.removeAt(index);
+    cartData.refresh();
+    box.write('cartData', cartData.value); 
+    totalProductCount.value = getTotalProductCount();
+  }
 
-    if (response.statusCode == 200) {
-      logger.i("Item deleted: ${response.body}");
-      fetchCartData(); // Refresh cart data after deletion
-    } else {
-      logger.e("Failed to delete item. Status Code: ${response.statusCode}");
-      Get.snackbar('Error', 'Failed to delete item from cart');
-    }
+  // Calculate total product count
+  int getTotalProductCount() {
+    return (cartData['products'] != null) ? cartData['products'].length : 0;
   }
 }

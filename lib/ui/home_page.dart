@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:project1/controllers/product_controller.dart';
 import 'package:project1/models/product_model.dart';
 import 'package:project1/ui/detailproduct_page.dart';
+import 'package:project1/controllers/cart_controller.dart';
 
 class HomePage extends StatelessWidget {
   final ProductController productController = Get.put(ProductController());
   final ScrollController _scrollController = ScrollController();
+  final CartController cartController = Get.put(CartController());
 
   HomePage() {
     _scrollController.addListener(() {
@@ -19,9 +21,12 @@ class HomePage extends StatelessWidget {
       }
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {
+
+    
     // Fetch initial data
     productController.fetchData();
 

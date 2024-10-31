@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:project1/controllers/cart_controller.dart';
 import 'package:project1/controllers/product_controller.dart';
 import 'package:project1/models/product_model.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:project1/ui/cart_page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final ProductController controller = Get.put(ProductController());
@@ -28,6 +30,35 @@ class ProductDetailPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.favorite_border),
             onPressed: () {},
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Get.to(()=>CartPage());
+                },
+              ),
+              Positioned(
+                right: 4,
+                top: 4,
+                child: Obx(() {
+                  return cartController.totalProductCount.value > 0
+                      ? Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${cartController.totalProductCount}',
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        )
+                      : SizedBox.shrink();
+                }),
+              ),
+            ],
           ),
         ],
       ),
@@ -162,32 +193,34 @@ class ProductDetailPage extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar() {
-  return Container(
-    decoration: BoxDecoration(
-      color: Colors.black,
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(30),  // Border radius for top left corner
-        topRight: Radius.circular(30),  // Border radius for top right corner
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30), // Border radius for top left corner
+          topRight: Radius.circular(30), // Border radius for top right corner
+        ),
+        border: Border(
+          top: BorderSide(
+              color: Colors.white, width: 2), // Optional border color and width
+        ),
       ),
-      border: Border(
-        top: BorderSide(color: Colors.white, width: 2), // Optional border color and width
-      ),
-    ),
       child: SizedBox(
         height: 70,
         child: Row(
-          
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () {
                 Map<String, dynamic> newItem = {
-      'id': product.id,
-  'title': product.title, // Make sure this exists
-  'price': product.price, // Make sure this exists
-      'quantity': 1, // Default quantity
-    };
-    cartController.addItemToCart(newItem);
+                  'id': product.id,
+                  'title': product.title,
+                  'price': product.price,
+                  'thumbnail':
+                      product.thumbnail, // Include thumbnail if available
+                  'quantity': 1, // Default quantity
+                };
+                cartController.addItemToCart(newItem);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -204,8 +237,6 @@ class ProductDetailPage extends StatelessWidget {
           ],
         ),
       ),
-    
-  );
-}
-
+    );
+  }
 }
