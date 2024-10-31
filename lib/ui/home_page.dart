@@ -2,16 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:project1/controllers/product_controller.dart';
+import 'package:project1/controllers/user_controller.dart';
 import 'package:project1/models/product_model.dart';
 import 'package:project1/ui/detailproduct_page.dart';
 import 'package:project1/controllers/cart_controller.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final ProductController productController = Get.put(ProductController());
   final ScrollController _scrollController = ScrollController();
   final CartController cartController = Get.put(CartController());
+  final UserController userController = Get.put(UserController());
 
-  HomePage() {
+  @override
+  void initState() {
+    super.initState();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+      productController.fetchData();
+    });
+
+    // Set up lazy loading
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 100) {
@@ -21,16 +36,110 @@ class HomePage extends StatelessWidget {
       }
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {
-
-    
-    // Fetch initial data
-    productController.fetchData();
+    final user = userController.user.value;
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: Drawer(
+  child: ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      Container(
+        color: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Obx(() {
+                  final user = userController.user.value;
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundImage: user?.image != null
+                        ? NetworkImage(user!.image)
+                        : AssetImage('assets/images/user.png') as ImageProvider,
+                  );
+                }),
+
+            
+            SizedBox(width: 16),
+            Expanded(
+                  child: Obx(() {
+                    final user = userController.user.value;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          '${user?.email ?? ''}',
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
+                    );
+                  }),
+            ),
+          ],
+        ),
+      ),
+
+      // Drawer Items
+      ListTile(
+        leading: Icon(Icons.home),
+        title: Text('Homepage'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.explore),
+        title: Text('Discover'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.shopping_bag),
+        title: Text('My Order'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.person),
+        title: Text('My Profile'),
+        onTap: () {},
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text('Settings'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.support),
+        title: Text('Support'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.info),
+        title: Text('About Us'),
+        onTap: () {},
+      ),
+    ],
+  ),
+),
+
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -38,11 +147,15 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.menu, size: 28),
+                  IconButton(
+                    icon: Icon(Icons.menu, size: 28),
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                  ),
                   Text("Gemstore",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -56,17 +169,16 @@ class HomePage extends StatelessWidget {
                 height: 50,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  
-                  
                   children: [
-                    _buildCategoryButton("All","assets/images/all.svg", true),
-                    _buildCategoryButton("Beauty","assets/images/beauty.svg", false),
-                    _buildCategoryButton("Fragrances","assets/images/fragrances.svg", false),
-                    _buildCategoryButton("Furniture","assets/images/furniture.svg", false),
-                    _buildCategoryButton("Groceries","assets/images/groceries.svg", false),
-
-  
-
+                    _buildCategoryButton("All", "assets/images/all.svg", true),
+                    _buildCategoryButton(
+                        "Beauty", "assets/images/beauty.svg", false),
+                    _buildCategoryButton(
+                        "Fragrances", "assets/images/fragrances.svg", false),
+                    _buildCategoryButton(
+                        "Furniture", "assets/images/furniture.svg", false),
+                    _buildCategoryButton(
+                        "Groceries", "assets/images/groceries.svg", false),
                   ],
                 ),
               ),
@@ -112,21 +224,18 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 12),
 
               // Product Grid with Lazy Loading
-              // Product Grid with Lazy Loading
               Expanded(
                 child: Obx(() {
                   if (productController.isLoading.value &&
                       productController.products.isEmpty) {
                     return Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.grey,
-                    ));
+                      child: CircularProgressIndicator(color: Colors.grey),
+                    );
                   } else if (productController.products.isEmpty) {
                     return Center(child: Text("No products found"));
                   } else {
                     return Stack(
                       children: [
-                        // Product Grid
                         GridView.builder(
                           controller: _scrollController,
                           itemCount: productController.products.length,
@@ -142,17 +251,14 @@ class HomePage extends StatelessWidget {
                             return _buildProductCard(product);
                           },
                         ),
-                        // Loading Indicator
                         if (productController.isLoadingMore.value)
                           Positioned(
-                            bottom:
-                                16.0, // Adjust as needed for spacing from the bottom
+                            bottom: 16.0,
                             left: 0,
                             right: 0,
                             child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.grey,
-                              ),
+                              child:
+                                  CircularProgressIndicator(color: Colors.grey),
                             ),
                           ),
                       ],
@@ -164,47 +270,40 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      
     );
   }
 
-  // Helper method to create category buttons
-  Widget _buildCategoryButton(String category, String svgIconPath, bool isSelected) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-    child: Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            // Background circle
-            Icon(
-              Icons.circle,
-              color: isSelected ? Colors.grey[400] : Colors.black.withOpacity(0),
-              size: 30,
-            ),
-            // SVG icon overlaid on the circle
-            SvgPicture.asset(
-              svgIconPath,
-              width: 20, 
-              height: 20, 
-              
-            ),
-          ],
-        ),
-        // Category text
-        Text(
-          category,
-          style: TextStyle(color: isSelected ? Colors.black : Colors.grey),
-        ),
-      ],
-    ),
-  );
-}
+  Widget _buildCategoryButton(
+      String category, String svgIconPath, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(
+                Icons.circle,
+                color:
+                    isSelected ? Colors.grey[400] : Colors.black.withOpacity(0),
+                size: 30,
+              ),
+              SvgPicture.asset(
+                svgIconPath,
+                width: 20,
+                height: 20,
+              ),
+            ],
+          ),
+          Text(
+            category,
+            style: TextStyle(color: isSelected ? Colors.black : Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
 
-
-
-  // Helper method to create product cards
   Widget _buildProductCard(Product product) {
     return GestureDetector(
       onTap: () {
@@ -218,7 +317,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:project1/config/globals.dart';
 import 'package:project1/ui/cart_page.dart';
 import 'package:project1/ui/home_page.dart';
 import 'package:project1/intro_pages/intro_page2.dart';
+import 'package:project1/ui/profile_page.dart';
 
 
 class MainLayout extends StatelessWidget {
@@ -28,13 +30,14 @@ class MainLayout extends StatelessWidget {
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (context) => CartPage(),
+
           );
         },
       ),
       Navigator(
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
-            builder: (context) => IntroPage2(),
+            builder: (context) => ProfilePage(),
           );
         },
       ),
@@ -72,17 +75,19 @@ class MainLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineToSafeArea: true,
-      backgroundColor: Colors.white,
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: true,
-      stateManagement: true,
-      navBarStyle: NavBarStyle.style12,
+    return Scaffold(
+      body: PersistentTabView(
+        context,
+        controller: globalTabController,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        confineToSafeArea: true,
+        backgroundColor: Colors.white,
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset: true,
+        stateManagement: true,
+        navBarStyle: NavBarStyle.style12, // Choose the style you need
+      ),
     );
   }
 }

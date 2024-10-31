@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
 import 'package:project1/controllers/cart_controller.dart';
+import 'package:project1/ui/shipping_page.dart';
+import 'package:project1/config/globals.dart';
 
 class CartPage extends StatefulWidget {
   @override
   _CartPageState createState() => _CartPageState();
+
 }
 
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.put(CartController());
+  final box = GetStorage();
 
   // Calculate total price
   double calculateTotal() {
@@ -26,6 +32,13 @@ class _CartPageState extends State<CartPage> {
         title: Text('Your Cart'),
         backgroundColor: Colors.white,
         elevation: 0,
+         leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: (){
+                        globalTabController.jumpToTab(0);
+
+          },
+        ),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -125,7 +138,9 @@ class _CartPageState extends State<CartPage> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onPressed: () {
-                      // Handle checkout
+                      box.write("total", calculateTotal());
+
+                      Get.to(()=>CheckoutStep1());
                     },
                     child: Text('Proceed to Checkout', style: TextStyle(color: Colors.white)),
                   ),

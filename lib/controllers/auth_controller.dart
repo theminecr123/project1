@@ -11,6 +11,7 @@ import 'dart:convert';
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
   final Logger logger = Logger();
+  final box = GetStorage();
 
   // Login function using API
   Future<void> login(String username, String password) async {
@@ -33,7 +34,6 @@ class AuthController extends GetxController {
 
         final String token = userData['accessToken'];
         final int userId = userData['id'];
-        final box = GetStorage();
         await box.write('userToken', token);
         await box.write('userId', userId);
 
