@@ -34,7 +34,7 @@ class User {
     String lastName;
     String maidenName;
     int age;
-    Gender gender;
+    String gender;
     String email;
     String phone;
     String username;
@@ -95,7 +95,7 @@ class User {
         lastName: json["lastName"],
         maidenName: json["maidenName"],
         age: json["age"],
-        gender: genderValues.map[json["gender"]]!,
+        gender: json["gender"]!,
         email: json["email"],
         phone: json["phone"],
         username: json["username"],

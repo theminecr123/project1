@@ -197,12 +197,12 @@ class ProductDetailPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30), // Border radius for top left corner
-          topRight: Radius.circular(30), // Border radius for top right corner
+          topLeft: Radius.circular(30), 
+          topRight: Radius.circular(30), 
         ),
         border: Border(
           top: BorderSide(
-              color: Colors.white, width: 2), // Optional border color and width
+              color: Colors.white, width: 2),
         ),
       ),
       child: SizedBox(
@@ -217,8 +217,8 @@ class ProductDetailPage extends StatelessWidget {
                   'title': product.title,
                   'price': product.price,
                   'thumbnail':
-                      product.thumbnail, // Include thumbnail if available
-                  'quantity': 1, // Default quantity
+                      product.thumbnail,
+                  'quantity': 1,
                 };
                 cartController.addItemToCart(newItem);
               },

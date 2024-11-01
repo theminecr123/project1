@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:project1/controllers/cart_controller.dart';
+import 'package:project1/controllers/order_controller.dart';
 import 'package:project1/controllers/user_controller.dart';
 import 'package:project1/ui/completed_page.dart';
 
@@ -11,11 +13,14 @@ class CheckoutStep2 extends StatefulWidget {
 
 class _CheckoutStep2State extends State<CheckoutStep2> {
   final UserController userController = Get.put(UserController());
+  final CartController cartController = Get.put(CartController());
+  final OrderController orderController = Get.put(OrderController());
+
   bool agreeToTerms = true;
   final box = GetStorage();
   late var total = box.read("total") ?? 0.0;
   late var shipCost = box.read("shipCost") ?? 0.0;
-
+   late Map<String, dynamic> cartData = box.read("cartData") ?? {};
   @override
   Widget build(BuildContext context) {
     final user = userController.user.value;
@@ -120,7 +125,12 @@ class _CheckoutStep2State extends State<CheckoutStep2> {
               child: ElevatedButton(
                 onPressed: agreeToTerms
                     ? () {
+                        orderController.saveOrder(cartData);
                         Get.to(() => CheckoutStep3());
+
+                        // cartController.completeOrder();
+                       
+
                       }
                     : null,
                 style: ElevatedButton.styleFrom(

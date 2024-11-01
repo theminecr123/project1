@@ -32,7 +32,6 @@ class UserController extends GetxController {
         var result = jsonDecode(response.body);
         var currentUser = User.fromJson(result);
         user.value = currentUser;
-        logger.i(response.body);
       } else {
         logger.e("Failed to fetch user data. Status code: ${response.statusCode}");
       }

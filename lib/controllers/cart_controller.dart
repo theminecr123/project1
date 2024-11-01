@@ -67,24 +67,32 @@ class CartController extends GetxController {
     }
   }
 
-  // Add item to cart locally
-  void addItemToCart(Map<String, dynamic> newItem) {
-    var products = cartData['products'] as List;
-    int existingIndex = products.indexWhere((product) => product['id'] == newItem['id']);
-    
-    if (existingIndex >= 0) {
-      // Increment quantity if product already exists
-      products[existingIndex]['quantity']++;
-    } else {
-      // Add new product
-      products.add({...newItem, 'quantity': 1});
-    }
-    
-    cartData.refresh();
-    box.write('cartData', cartData.value); 
-    Get.snackbar('Success!', 'Added product to Cart!', backgroundColor: const Color.fromARGB(255, 120, 224, 124));
-    totalProductCount.value = getTotalProductCount();
+ void addItemToCart(Map<String, dynamic> newItem) {
+  cartData['products'] ??= [];
+  
+  List<Map<String, dynamic>> products = List<Map<String, dynamic>>.from(cartData['products']);
+
+  int existingIndex = products.indexWhere((product) => product['id'] == newItem['id']);
+
+  if (existingIndex >= 0) {
+    products[existingIndex]['quantity']++;
+  } else {
+    products.add({...newItem, 'quantity': 1});
   }
+
+  // Update 'products' in cartData and write to storage
+  cartData['products'] = products;
+  cartData.refresh();  // Refresh to notify listeners
+  box.write('cartData', cartData.value); 
+
+
+  // Show success message
+  Get.snackbar('Success!', 'Added product to Cart!', backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+
+  // Update total product count
+  totalProductCount.value = getTotalProductCount();
+}
+
 
   // Delete item from cart
   void deleteItemFromCart(int index) {
@@ -99,4 +107,62 @@ class CartController extends GetxController {
   int getTotalProductCount() {
     return (cartData['products'] != null) ? cartData['products'].length : 0;
   }
+
+void completeOrder() {
+
+    cartData.value = {
+      'products': [],
+      'total': 0,
+      'discountedTotal': 0,
+      'totalQuantity': 0,
+    };
+    cartData.refresh();
+    
+    box.write('cartData', cartData.value);
+    
+    totalProductCount.value = 0;
+
+    Get.snackbar('Order Completed!', 'Your order has been completed successfully.',
+        backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+  }
+  
+//   void completeOrder() {
+//   // Get the current order details before clearing
+//   var currentOrder = {
+//     'orderId': DateTime.now().millisecondsSinceEpoch,
+//     'date': DateTime.now().toString(),
+//     'orderData': {
+//       'products': List<Map<String, dynamic>>.from(cartData['products'] ?? []),
+//       'total': box.read('total'),
+//       'discountedTotal': box.read('total'), // assuming no discount
+//       'totalQuantity': getTotalProductCount(),
+//     },
+//   };
+
+//   // Retrieve existing pending orders, ensure it's a list
+//   var pendingOrders = box.read('pendingOrder');
+//   if (pendingOrders is! List) {
+//     pendingOrders = []; // Initialize as list if null or invalid type
+//   }
+
+//   // Add the current order to pending orders
+//   pendingOrders.add(currentOrder);
+//   box.write('pendingOrder', pendingOrders);
+
+//   // Clear the cart data
+//   cartData.value = {
+//     'products': [],
+//     'total': 0,
+//     'discountedTotal': 0,
+//     'totalQuantity': 0,
+//   };
+//   cartData.refresh();
+//   box.write('cartData', cartData.value);
+
+//   totalProductCount.value = 0;
+
+//   Get.snackbar('Order Completed!', 'Your order has been completed successfully.',
+//       backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+// }
+
 }
