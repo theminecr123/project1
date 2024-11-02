@@ -15,12 +15,24 @@ class _CheckoutStep2State extends State<CheckoutStep2> {
   final UserController userController = Get.put(UserController());
   final CartController cartController = Get.put(CartController());
   final OrderController orderController = Get.put(OrderController());
+  late Map<String, dynamic> cartData;
 
   bool agreeToTerms = true;
   final box = GetStorage();
   late var total = box.read("total") ?? 0.0;
   late var shipCost = box.read("shipCost") ?? 0.0;
-   late Map<String, dynamic> cartData = box.read("cartData") ?? {};
+
+  
+  @override
+  void initState() {
+    super.initState();
+
+    // Safely initialize cartData
+    var storedCartData = box.read("cartData");
+    cartData = storedCartData is Map<String, dynamic> ? storedCartData : {};
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final user = userController.user.value;
@@ -126,9 +138,9 @@ class _CheckoutStep2State extends State<CheckoutStep2> {
                 onPressed: agreeToTerms
                     ? () {
                         orderController.saveOrder(cartData);
-                        Get.to(() => CheckoutStep3());
+                        Get.offAll(() => CheckoutStep3());
 
-                        // cartController.completeOrder();
+                        cartController.completeOrder();
                        
 
                       }

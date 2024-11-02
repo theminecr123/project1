@@ -170,16 +170,16 @@ class _HomePageState extends State<HomePage> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    _buildCategoryButton("All", "assets/images/all.svg", true),
+                    _buildCategoryButton("All","all", "assets/images/all.svg"),
                     _buildCategoryButton(
-                        "Beauty", "assets/images/beauty.svg", false),
+                        "Beauty","beauty", "assets/images/beauty.svg"),
                     _buildCategoryButton(
-                        "Fragrances", "assets/images/fragrances.svg", false),
+                        "Fragrances","fragrances", "assets/images/fragrances.svg"),
                     _buildCategoryButton(
-                        "Furniture", "assets/images/furniture.svg", false),
+                        "Furniture","furniture", "assets/images/furniture.svg"),
                     _buildCategoryButton(
-                        "Groceries", "assets/images/groceries.svg", false),
-                  ],
+                        "Groceries","groceries", "assets/images/groceries.svg"),
+                  ]
                 ),
               ),
               SizedBox(height: 16),
@@ -273,9 +273,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCategoryButton(
-      String category, String svgIconPath, bool isSelected) {
-    return Padding(
+Widget _buildCategoryButton(String category, String id, String svgIconPath) {
+  return GestureDetector(
+    onTap: () {
+      productController.filterByCategory(id); // Trigger the filtering
+    },
+    child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
         children: [
@@ -284,8 +287,9 @@ class _HomePageState extends State<HomePage> {
             children: [
               Icon(
                 Icons.circle,
-                color:
-                    isSelected ? Colors.grey[400] : Colors.black.withOpacity(0),
+                color: productController.selectedCategory.value == id
+                    ? Colors.grey[400]
+                    : Colors.black.withOpacity(0),
                 size: 30,
               ),
               SvgPicture.asset(
@@ -297,12 +301,17 @@ class _HomePageState extends State<HomePage> {
           ),
           Text(
             category,
-            style: TextStyle(color: isSelected ? Colors.black : Colors.grey),
+            style: TextStyle(
+              color: productController.selectedCategory.value == id
+                  ? Colors.black
+                  : Colors.grey,
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildProductCard(Product product) {
     return GestureDetector(

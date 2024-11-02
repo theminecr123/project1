@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project1/config/MainNavigation.dart';
+import 'package:project1/config/globals.dart';
 import 'package:project1/ui/home_page.dart';
 
 class CheckoutStep3 extends StatelessWidget {
@@ -30,7 +31,8 @@ class CheckoutStep3 extends StatelessWidget {
               ElevatedButton(
                 onPressed:
                     () {
-                        Get.offAll(() => MainLayout());
+                        Get.offAll(()=>MainLayout());
+                        globalTabController.jumpToTab(0);
                       }
                     ,
                 style: ElevatedButton.styleFrom(

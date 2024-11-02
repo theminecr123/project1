@@ -5,26 +5,35 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
+import 'package:uuid/uuid.dart';
+
 class OrderController extends GetxController {
-  final box = GetStorage();
-    Logger logger = new Logger();
+  final orders = <Map<String, dynamic>>[].obs;
+  final Uuid uuid = Uuid();
+  Logger logger = new Logger();
+  GetStorage box =  GetStorage();
+  void saveOrder(Map<String, dynamic> cartData) {
+    List<dynamic> existingOrders = List<Map<String, dynamic>>.from(box.read('pendingOrder') ?? []);
 
-  void saveOrder(Map<String, dynamic> orderData) {
-    logger.i(orderData);
+    logger.i(existingOrders);
+    final orderId = uuid.v4();  // Generate unique ID
+    final int productCount = cartData['products'].length;
+    final double orderTotal = cartData['products'].fold(
+      0.0,
+      (sum, item) => sum + (item['price'] * item['quantity']),
+    );
+
+    final order = {
+      'id': orderId,
+      'products': cartData['products'],
+      'total': orderTotal,
+      'productCount': productCount,
+      'date': DateTime.now().toIso8601String(),
+    };
+    existingOrders.add(order);
+
+    box.write('pendingOrder', existingOrders);
+    box.remove('cartData');
     
-    var orders = box.read('pendingOrder');
-    if (orders is! List) {
-      orders = []; 
-    }
-
-    // Add new order
-    orders.add({
-      'orderId': DateTime.now().millisecondsSinceEpoch, 
-      'date': DateTime.now().toString(),
-      'orderData': orderData,
-    });
-
-    // Write back to GetStorage
-    box.write('pendingOrder', orders);
   }
 }

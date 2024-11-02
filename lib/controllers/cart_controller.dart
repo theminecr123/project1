@@ -122,47 +122,9 @@ void completeOrder() {
     
     totalProductCount.value = 0;
 
-    Get.snackbar('Order Completed!', 'Your order has been completed successfully.',
-        backgroundColor: const Color.fromARGB(255, 120, 224, 124));
+  
   }
   
-//   void completeOrder() {
-//   // Get the current order details before clearing
-//   var currentOrder = {
-//     'orderId': DateTime.now().millisecondsSinceEpoch,
-//     'date': DateTime.now().toString(),
-//     'orderData': {
-//       'products': List<Map<String, dynamic>>.from(cartData['products'] ?? []),
-//       'total': box.read('total'),
-//       'discountedTotal': box.read('total'), // assuming no discount
-//       'totalQuantity': getTotalProductCount(),
-//     },
-//   };
 
-//   // Retrieve existing pending orders, ensure it's a list
-//   var pendingOrders = box.read('pendingOrder');
-//   if (pendingOrders is! List) {
-//     pendingOrders = []; // Initialize as list if null or invalid type
-//   }
-
-//   // Add the current order to pending orders
-//   pendingOrders.add(currentOrder);
-//   box.write('pendingOrder', pendingOrders);
-
-//   // Clear the cart data
-//   cartData.value = {
-//     'products': [],
-//     'total': 0,
-//     'discountedTotal': 0,
-//     'totalQuantity': 0,
-//   };
-//   cartData.refresh();
-//   box.write('cartData', cartData.value);
-
-//   totalProductCount.value = 0;
-
-//   Get.snackbar('Order Completed!', 'Your order has been completed successfully.',
-//       backgroundColor: const Color.fromARGB(255, 120, 224, 124));
-// }
 
 }
