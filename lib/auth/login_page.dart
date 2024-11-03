@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project1/auth/signup_page.dart';
 import 'package:project1/controllers/auth_controller.dart';
 
 class LoginPage extends StatelessWidget {
@@ -90,7 +91,7 @@ class LoginPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () {
-                  Get.toNamed("/signup");
+                  Get.to(() => SignupPage());
                 },
                 child: const Text("Don't have an account? Sign Up"),
               ),
