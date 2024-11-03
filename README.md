@@ -4,64 +4,57 @@ An E-commerce Flutter App using GetX and Get_storage.
 
 
 ## Login
-![alt text](./assets/screenshots/login.png "Title")
+<img src="./assets/screenshots/login.png" alt="Login" title="Login" style="width: 50%; height: 50%;">
 
 ## Signup
-![alt text](./assets/screenshots/signup.png "Title")
+<img src="./assets/screenshots/signup.png" alt="Signup" title="Signup" style="width: 50%; height: 50%;">
 
 ## Home
-![alt text](./assets/screenshots/home1.png "Title")
+<img src="./assets/screenshots/home1.png" alt="Home" title="Home" style="width: 50%; height: 50%;">
 
 ## Sidebar
-![alt text](./assets/screenshots/home2.png "Title")
+<img src="./assets/screenshots/home2.png" alt="Sidebar" title="Sidebar" style="width: 50%; height: 50%;">
 
 ## Filter
-![alt text](./assets/screenshots/filter.png "Title")
+<img src="./assets/screenshots/filter.png" alt="Filter" title="Filter" style="width: 50%; height: 50%;">
 
 ## Search
-![alt text](./assets/screenshots/search.png "Title")
+<img src="./assets/screenshots/search.png" alt="Search" title="Search" style="width: 50%; height: 50%;">
 
 ## Result
-![alt text](./assets/screenshots/result.png "Title")
-
+<img src="./assets/screenshots/result.png" alt="Result" title="Result" style="width: 50%; height: 50%;">
 
 ## Detail
-![alt text](./assets/screenshots/detail.png "Title")
-![alt text](./assets/screenshots/detail2.png "Title")
+<img src="./assets/screenshots/detail.png" alt="Detail" title="Detail" style="width: 50%; height: 50%;">
+<img src="./assets/screenshots/detail2.png" alt="Detail 2" title="Detail 2" style="width: 50%; height: 50%;">
 
 ## Cart
-![alt text](./assets/screenshots/cart.png "Title")
+<img src="./assets/screenshots/cart.png" alt="Cart" title="Cart" style="width: 50%; height: 50%;">
 
 ## Shipping
-![alt text](./assets/screenshots/shipping.png "Title")
-![alt text](./assets/screenshots/shipping2.png "Title")
+<img src="./assets/screenshots/shipping.png" alt="Shipping" title="Shipping" style="width: 50%; height: 50%;">
+<img src="./assets/screenshots/shipping2.png" alt="Shipping 2" title="Shipping 2" style="width: 50%; height: 50%;">
 
 ## Payment
-![alt text](./assets/screenshots/payment.png "Title")
+<img src="./assets/screenshots/payment.png" alt="Payment" title="Payment" style="width: 50%; height: 50%;">
 
 ## Completed
-![alt text](./assets/screenshots/completed.png "Title")
+<img src="./assets/screenshots/completed.png" alt="Completed" title="Completed" style="width: 50%; height: 50%;">
 
 ## Setting
-![alt text](./assets/screenshots/setting.png "Title")
+<img src="./assets/screenshots/setting.png" alt="Setting" title="Setting" style="width: 50%; height: 50%;">
 
 ## Profile Setting
-![alt text](./assets/screenshots/profile_setting.png "Title")
+<img src="./assets/screenshots/profile_setting.png" alt="Profile Setting" title="Profile Setting" style="width: 50%; height: 50%;">
 
 ## Order
-![alt text](./assets/screenshots/orders.png "Title")
+<img src="./assets/screenshots/orders.png" alt="Order" title="Order" style="width: 50%; height: 50%;">
 
 ## Order detail
-![alt text](./assets/screenshots/detail_order.png "Title")
+<img src="./assets/screenshots/detail_order.png" alt="Order Detail" title="Order Detail" style="width: 50%; height: 50%;">
 
 ## Pending
-![alt text](./assets/screenshots/pending.png "Title")
+<img src="./assets/screenshots/pending.png" alt="Pending" title="Pending" style="width: 50%; height: 50%;">
 
 ## Canceled
-![alt text](./assets/screenshots/canceled.png "Title")
-
-
-
-
-
-
+<img src="./assets/screenshots/canceled.png" alt="Canceled" title="Canceled" style="width: 50%; height: 50%;">
