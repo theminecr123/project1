@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       productController.fetchData();
     });
 
@@ -44,102 +44,100 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: [
-      Container(
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            Obx(() {
-                  final user = userController.user.value;
-                  return CircleAvatar(
-                    radius: 30,
-                    backgroundImage: user?.image != null
-                        ? NetworkImage(user!.image)
-                        : AssetImage('assets/images/user.png') as ImageProvider,
-                  );
-                }),
-
-            
-            SizedBox(width: 16),
-            Expanded(
-                  child: Obx(() {
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() {
                     final user = userController.user.value;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          '${user?.email ?? ''}',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
+                    return CircleAvatar(
+                      radius: 30,
+                      backgroundImage: user?.image != null
+                          ? NetworkImage(user!.image)
+                          : AssetImage('assets/images/user.png')
+                              as ImageProvider,
                     );
                   }),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Obx(() {
+                      final user = userController.user.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${user?.firstName ?? ''} ${user?.lastName ?? ''}',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '${user?.email ?? ''}',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                              fontSize: 14,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            ),
+
+            // Drawer Items
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Homepage'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.explore),
+              title: Text('Discover'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag),
+              title: Text('My Order'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('My Profile'),
+              onTap: () {},
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.support),
+              title: Text('Support'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text('About Us'),
+              onTap: () {},
             ),
           ],
         ),
       ),
-
-      // Drawer Items
-      ListTile(
-        leading: Icon(Icons.home),
-        title: Text('Homepage'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.explore),
-        title: Text('Discover'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.shopping_bag),
-        title: Text('My Order'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.person),
-        title: Text('My Profile'),
-        onTap: () {},
-      ),
-      Divider(),
-      ListTile(
-        leading: Icon(Icons.settings),
-        title: Text('Settings'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.support),
-        title: Text('Support'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.info),
-        title: Text('About Us'),
-        onTap: () {},
-      ),
-    ],
-  ),
-),
-
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -166,22 +164,26 @@ class _HomePageState extends State<HomePage> {
 
               // Category Selection
               SizedBox(
-                height: 50,
-                child: ListView(
+                height: 60,
+                child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildCategoryButton("All","all", "assets/images/all.svg"),
-                    _buildCategoryButton(
-                        "Beauty","beauty", "assets/images/beauty.svg"),
-                    _buildCategoryButton(
-                        "Fragrances","fragrances", "assets/images/fragrances.svg"),
-                    _buildCategoryButton(
-                        "Furniture","furniture", "assets/images/furniture.svg"),
-                    _buildCategoryButton(
-                        "Groceries","groceries", "assets/images/groceries.svg"),
-                  ]
+                  child: Row(
+                    children: [
+                      _buildCategoryButton(
+                          "All", "all", "assets/images/all.svg"),
+                      _buildCategoryButton(
+                          "Beauty", "beauty", "assets/images/beauty.svg"),
+                      _buildCategoryButton("Fragrances", "fragrances",
+                          "assets/images/fragrances.svg"),
+                      _buildCategoryButton("Furniture", "furniture",
+                          "assets/images/furniture.svg"),
+                      _buildCategoryButton("Groceries", "groceries",
+                          "assets/images/groceries.svg"),
+                    ],
+                  ),
                 ),
               ),
+
               SizedBox(height: 16),
 
               // Featured Banner
@@ -273,45 +275,45 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-Widget _buildCategoryButton(String category, String id, String svgIconPath) {
-  return GestureDetector(
-    onTap: () {
-      productController.filterByCategory(id); // Trigger the filtering
-    },
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Icon(
-                Icons.circle,
-                color: productController.selectedCategory.value == id
-                    ? Colors.grey[400]
-                    : Colors.black.withOpacity(0),
-                size: 30,
-              ),
-              SvgPicture.asset(
-                svgIconPath,
-                width: 20,
-                height: 20,
-              ),
-            ],
-          ),
-          Text(
-            category,
-            style: TextStyle(
-              color: productController.selectedCategory.value == id
-                  ? Colors.black
-                  : Colors.grey,
+  Widget _buildCategoryButton(String category, String id, String svgIconPath) {
+    return GestureDetector(
+      onTap: () {
+        productController.filterByCategory(id); // Trigger the filtering
+      },
+      child: Obx(() => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      color: productController.selectedCategory.value == id
+                          ? Colors.grey[300]
+                          : Colors.black.withOpacity(0),
+                      size: 40,
+                    ),
+                    SvgPicture.asset(
+                      svgIconPath,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ],
+                ),
+                Text(
+                  category,
+                  style: TextStyle(
+                    color: productController.selectedCategory.value == id
+                        ? Colors.black
+                        : Colors.grey,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+          )),
+    );
+  }
 
   Widget _buildProductCard(Product product) {
     return GestureDetector(

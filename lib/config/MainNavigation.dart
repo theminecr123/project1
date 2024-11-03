@@ -5,6 +5,8 @@ import 'package:project1/ui/cart_page.dart';
 import 'package:project1/ui/home_page.dart';
 import 'package:project1/intro_pages/intro_page2.dart';
 import 'package:project1/ui/profile_page.dart';
+import 'package:project1/ui/search_page.dart';
+
 
 
 class MainLayout extends StatelessWidget {
@@ -22,7 +24,7 @@ class MainLayout extends StatelessWidget {
       Navigator(
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
-            builder: (context) => IntroPage2(),
+            builder: (context) => SearchPage(),
           );
         },
       ),

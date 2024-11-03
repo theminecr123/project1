@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:project1/models/product_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,12 +8,13 @@ class ProductController extends GetxController {
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
   var products = <Product>[].obs;
-  var allProducts = <Product>[].obs;
-
   int currentPage = 0;
   var selectedCategory = ''.obs;
+  Logger logger = Logger();
+  var searchResults = <Product>[].obs;
+  var isSearching = false.obs;
 
-  Future<void> fetchData({bool loadMore = false}) async {
+  Future<void> fetchData({String? category, bool loadMore = false}) async {
     if (loadMore) {
       isLoadingMore(true);
     } else {
@@ -24,11 +25,15 @@ class ProductController extends GetxController {
 
     try {
       currentPage++;
-      String url = 'https://dummyjson.com/products?skip=${(currentPage - 1) * 6}&limit=6';
-      if (selectedCategory.value.isNotEmpty && selectedCategory.value != 'all') {
-        url += '&category=${selectedCategory.value}';
+      String url;
+
+      if (category != null && category.isNotEmpty && category != 'all') {
+        url = 'https://dummyjson.com/products/category/$category?skip=${(currentPage - 1) * 6}&limit=6';
+      } else {
+        // Default URL to fetch all products
+        url = 'https://dummyjson.com/products?skip=${(currentPage - 1) * 6}&limit=6';
       }
-      
+
       http.Response response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         var result = jsonDecode(response.body);
@@ -52,14 +57,25 @@ class ProductController extends GetxController {
     }
   }
 
-
-
   List<Product> getSimilarProducts(String category) {
     return products.where((p) => p.category == category).toList();
   }
 
   void filterByCategory(String category) {
     selectedCategory.value = category;
-    fetchData(); // Call fetchData with the selected category
+    selectedCategory.refresh();
+    fetchData(category: category);
+  }
+
+  void searchProducts(String query) {
+    if (query.isEmpty) {
+      isSearching(false);
+      searchResults.clear();
+    } else {
+      isSearching(false);
+      searchResults.value = products.where((product) {
+        return product.title.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
   }
 }
